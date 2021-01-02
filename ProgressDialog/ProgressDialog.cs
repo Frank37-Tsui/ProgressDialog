@@ -22,21 +22,19 @@ namespace WindowsFormsApp1
             } 
         }
         
-
         private Action action;
+
+        public Exception exception { get; private set; }
 
         public ProgressDialog(string title)
         {
             InitializeComponent();
             this.Text = title;
         }
-        public void Init(Action action)
+
+        public void Run(Action action)
         {
             this.action = action;
-        }
-
-        public void Run()
-        {            
             this.ShowDialog();
         }
 
@@ -44,12 +42,28 @@ namespace WindowsFormsApp1
         {
             Task.Factory.StartNew(new Action(() =>
             {
-                action();
-                this.Invoke(new Action(() =>
+                try
                 {
-                    this.Dispose(); ;
-                }));                
+                    action();                    
+                }
+                catch (Exception ex)
+                {
+                    this.exception = ex;
+                }
+                finally
+                {
+                    TaskDispose();
+                }
+                
             }));
         }
+
+        private void TaskDispose()
+        {
+            this.Invoke(new Action(() =>
+            {
+                this.Dispose(); ;
+            }));
+        }    
     }
 }

@@ -21,15 +21,25 @@ namespace Demo
         private void button1_Click(object sender, EventArgs e)
         {
             ProgressDialog dlg = new ProgressDialog("Test");
-            dlg.Init(new Action(() =>
-            {
+            dlg.Run(new Action(() =>
+            {                
                 for (int i = 0; i < 10; i++)
                 {
                     dlg.Status = i.ToString();
+                    //if (i == 5)
+                    //    throw new Exception("testException");
                     Thread.Sleep(500);
-                }
+                }                                
             }));
-            dlg.Run();
-        }
+
+            if (dlg.exception != null)
+            {
+                MessageBox.Show(dlg.exception.Message);
+            }
+            else
+            {
+                MessageBox.Show("Done");
+            }
+        }       
     }
 }
